@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -33,6 +32,12 @@ type StatusBase struct {
 	Orgstatus     string `db:"orgstatus"`
 }
 
+type StatusDesc struct {
+	Post string `db:"postal_code"`
+	Name string `db:"status_name"`
+	Code string `db:"status_code"`
+}
+
 func main() {
 
 	var xar = []BarCode{}
@@ -40,41 +45,21 @@ func main() {
 	for _, h := range list {
 		xar = SetArray(xar, h)
 	}
-	bytes, err := json.Marshal(xar)
-	if err != nil {
-		print("Can't serislize", xar)
+	var ld = GetStatDescs()
+	for _, l := range ld {
+		println(l.Name)
 	}
-	print("var  = '%v'\n", string(bytes))
-	WriteToFile("out.json", string(bytes))
-	if false {
-		/*conn, err := sqlx.Connect("mysql", "art:art2@tcp(localhost:3306)/test")
+
+	/*
+		bytes, err := json.Marshal(xar)
 		if err != nil {
-			panic(err)
+			print("Can't serislize", xar)
 		}
-		conn.MustExec(schema)
-		res, err := conn.Exec("INSERT INTO users2 (name) VALUES(\"Peter\")")
-		if err != nil {
-			panic(err)
-		}
-		id, err := res.LastInsertId()
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("Created user with id:%d", id)
-		var user User
-		err = conn.Get(&user, "select * from users2 where id=?", id)
-		if err != nil {
-			panic(err)
-		}
-		_, err = conn.Exec("UPDATE users set name=\"John\" where id=?", id)
-		if err != nil {
-			panic(err)
-		}
-		_, err = conn.Exec("DELETE FROM users where id=?", id)
-		if err != nil {
-			panic(err)
-		}*/
-	}
+		print("var  = '%v'\n", string(bytes))
+		WriteToFile("out.json", string(bytes))
+
+	*/
+
 	scanner()
 }
 
@@ -95,6 +80,21 @@ func GetTable() []StatusBase {
 		panic(err)
 	}
 	err = conn.Select(&u, "SELECT * FROM status_base")
+	if err != nil {
+		panic(err)
+	}
+
+	return u
+}
+
+func GetStatDescs() []StatusDesc {
+
+	u := []StatusDesc{}
+	conn, err := sqlx.Connect("mysql", "art:art2@tcp(localhost:3306)/test")
+	if err != nil {
+		panic(err)
+	}
+	err = conn.Select(&u, "SELECT postal_code,status_name,status_code FROM status_desc")
 	if err != nil {
 		panic(err)
 	}

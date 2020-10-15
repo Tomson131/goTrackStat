@@ -22,10 +22,6 @@ func SetContains(ar []BarCode, stat StatusBase) []BarCode {
 	return ar
 }
 
-/*func AddStatar(ar []StatusBase, s StatusBase) []StatusBase {
-	ar = append(ar, s)
-	return ar
-}*/
 func AddBarar(ar []BarCode, s StatusBase) []BarCode {
 	ar = append(ar, BarCode{Barcode: s.Barcode, List: []StatusBase{s}})
 	return ar
@@ -39,3 +35,4 @@ func WriteToFile(filename string, msg string) {
 	defer file.Close()
 	file.WriteString(msg)
 }
+
